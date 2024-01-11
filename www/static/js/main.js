@@ -100,6 +100,13 @@ function process_login() {
     // Clear the password so they can't do it again
     $("#password").val("")
 
+    // Add a spinner so they know it's trying!
+    $("#login").html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking`)
+    $("#login").prop("disabled",true)
+    $("#username").prop("disabled",true)
+    $("#password").prop("disabled",true)
+
+
     $.ajax(
         {
             url: "login",
@@ -113,9 +120,16 @@ function process_login() {
                 session = session_string
 
                 Cookies.set("groupactivity_session_id", session, { secure: false, sameSite: 'strict' })
+                $("#login").text("Log In")
+                $("#login").prop("disabled",false)
+                $("#username").prop("disabled",false)
+                $("#password").prop("disabled",false)
                 show_login()
             },
             error: function(message) {
+                $("#login").prop("disabled",false)
+                $("#username").prop("disabled",false)
+                $("#password").prop("disabled",false)
                 $("#login").text("Login Failed")
                 $("#login").removeClass("btn-primary")
                 $("#login").addClass("btn-danger")
