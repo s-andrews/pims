@@ -1,5 +1,3 @@
-var session = ""
-
 $( document ).ready(function() {
     show_login()
 
@@ -25,9 +23,6 @@ function button_pressed() {
         {
             url: "get_user_data",
             method: "POST",
-            data: {
-                session: session
-            },
             success: function(user_data) {
                 write_user_data(user_data)
             },
@@ -49,16 +44,13 @@ function show_login() {
 
     // Check to see if there's a valid session ID we can use
 
-    session = Cookies.get("groupactivity_session_id")
+    let session = Cookies.get("groupactivity_session_id")
     if (session) {
         // Validate the ID
         $.ajax(
             {
                 url: "validate_session",
                 method: "POST",
-                data: {
-                    session: session,
-                },
                 success: function(usersname) {
                     $("#logindiv").modal("hide")
 
@@ -69,7 +61,6 @@ function show_login() {
                 },
                 error: function(message) {
                     console.log("Existing session didn't validate")
-                    session = ""
                     Cookies.remove("groupactivity_session_id")
                     $("#logindiv").modal("show")
                     show_login()
@@ -83,7 +74,6 @@ function show_login() {
 }
 
 function logout() {
-    session_id = ""
     Cookies.remove("groupactivity_session_id")
     $("#maincontent").hide()
 
@@ -117,9 +107,8 @@ function process_login() {
             },
             success: function(session_string) {
                 $("#loginerror").hide()
-                session = session_string
 
-                Cookies.set("groupactivity_session_id", session, { secure: false, sameSite: 'strict' })
+                Cookies.set("groupactivity_session_id", session_string, { secure: false, sameSite: 'strict' })
                 $("#login").text("Log In")
                 $("#login").prop("disabled",false)
                 $("#username").prop("disabled",false)

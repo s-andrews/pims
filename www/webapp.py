@@ -73,8 +73,7 @@ def process_login():
     # Check the password against AD
     conn = ldap.initialize("ldap://"+server_conf["server"]["ldap"])
     conn.set_option(ldap.OPT_REFERRALS, 0)
-    try:
-    
+    try:    
         conn.simple_bind_s(username+"@"+server_conf["server"]["ldap"], password)
 
         # Clear any IP recorded login fails
@@ -157,11 +156,22 @@ def get_user_data():
 
 
 def get_form():
+    # In addition to the main arguments we also add the session
+    # string from the cookie
+    session = ""
+
+    if "groupactivity_session_id" in request.cookies:
+        session = request.cookies["groupactivity_session_id"]
+
     if request.method == "GET":
-        return request.args
+        form = request.args.to_dict(flat=True)
+        form["session"] = session
+        return form
 
     elif request.method == "POST":
-        return request.form
+        form = request.form.to_dict(flat=True)
+        form["session"] = session
+        return form
 
 
 def generate_id(size):
