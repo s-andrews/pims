@@ -235,7 +235,7 @@ def connect_to_database(conf):
         conf['server']['address'],
         username = conf['server']['username'],
         password = conf['server']['password'],
-        authSource = "webbase_database"
+        authSource = "pims_database"
     )
 
 

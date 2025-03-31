@@ -1,10 +1,10 @@
 # Log in to mongosh as root
 
-use webbase_database
+use pims_database
 db.createUser(
   {
-    user: "webuser",
-    pwd:  "apassword",
-    roles: [ { role: "readWrite", db: "webbase_database" }]
+    user: "pimsuser",
+    pwd:  "",
+    roles: [ { role: "readWrite", db: "pims_database" }]
   }
 )

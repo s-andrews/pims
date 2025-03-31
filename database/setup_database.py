@@ -17,7 +17,7 @@ def main():
         conf['server']['address'],
         username = conf['server']['username'],
         password = conf['server']['password'],
-        authSource = "webbase_database"
+        authSource = "pims_database"
     )
     db = client.webbase_database
 
