@@ -1,18 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Example Web System{% endblock %}
 {% block content %}
-<div class="container-fluid text-center">
-  <img src="{{ url_for('static', filename='images/bioinformatics_logo.svg') }}" width="25%">
+<div class="row">
+  <p>
+    This is the PIMS proteomics LIMS system.  Here you can see your existing projects and results, and can share these with others.
+  </p>
+  <p>
+    To start a new project you must first contact the proteomics facility to discuss the work and get them to create a project for you.  Once created you can then add samples and see results once they start to appear.
+  </p>
 </div>
-<div class="container-fluid text-center">
-  <div class="row">
-    <div class="col-md-3"><button class="btn btn-primary" id="pressme">Press me</button></div>
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-      <div><h4 class="d-inline">Name:</h4> <span id="user_details_name"></span></div>
-      <div><h4 class="d-inline">Username:</h4> <span id="user_details_username"></span></div>
-      <div><h4 class="d-inline">Email:</h4> <span id="user_details_email"></span></div>
-    </div>
-  </div>
+<div class="row">
+  <h2>Recent Projects</h2>
 </div>
 {% endblock %}
