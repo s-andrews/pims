@@ -120,7 +120,9 @@ def process_login():
         # We can assign the new sessioncode to them and then return it
         people.update_one({"username":username},{"$set":{"sessioncode": sessioncode}})
 
-        return(sessioncode)
+        response = make_response(sessioncode)
+        response.set_cookie("pims_session_id",sessioncode)
+        return(response)
     
     except ldap.INVALID_CREDENTIALS:
         # We need to record this failure.  If there is a user with this name we record
@@ -160,8 +162,8 @@ def get_form():
     # string from the cookie
     session = ""
 
-    if "groupactivity_session_id" in request.cookies:
-        session = request.cookies["groupactivity_session_id"]
+    if "pims_session_id" in request.cookies:
+        session = request.cookies["pims_session_id"]
 
     if request.method == "GET":
         form = request.args.to_dict(flat=True)
