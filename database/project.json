@@ -1,0 +1,43 @@
+{
+    "project_number": 1,
+    "owner": "person_oid",
+    "title": "Short description",
+    "description": "Longer text for description",
+    "date_created": "date",
+    "date_completed": "date",
+    "status":"pending",
+    "budgets": [
+        {
+            "budget":"S1234-X0000",
+            "percent": 20
+        },
+        {
+            "budget":"S1234-X0001",
+            "percent": 80
+        }
+    ],
+    "expected_samples": 5,
+    "sample_tags": ["genotype","treatment"],
+    "sharing_codes": [
+        {"code":"ABC1234","reason":"Shared with collaborator"},{"code":"DEF4566","reason":"Reviewer access"}
+    ],
+    "shared_with":["person_oid1","person_oid2","person_oid3"],
+    "samples" : [
+        {
+            "sample_id": 1,
+            "name": "my sample",
+            "format" : "Gel slice",
+            "species": ["Mus musculus","Bos taurus"],
+            "status": "Not recevied",
+            "tags" : {"genotype": "WT","Treatment":"DMSO"}
+        },
+        {
+            "sample_id": 2,
+            "name": "my other sample",
+            "format" : "Gel slice",
+            "species": ["Mus musculus","Bos taurus"],
+            "status": "Not recevied",
+            "tags" : {"genotype": "KO","Treatment":"DMSO"}
+        }
+    ]
+}
