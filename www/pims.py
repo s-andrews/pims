@@ -113,6 +113,7 @@ def process_login():
                 "sessioncode": "",
                 "locked_at": 0,
                 "failed_logins": [],
+                "is_admin": False
             }
         
             people.insert_one(new_person)

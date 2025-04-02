@@ -6,5 +6,6 @@
     "disabled": false,
     "locked_at": "",
     "failed_logins": [],
-    "sessioncode": "usedwhenloggingin"
+    "sessioncode": "usedwhenloggingin",
+    "is_admin": false
 }
