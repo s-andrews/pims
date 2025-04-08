@@ -15,15 +15,71 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    form = get_form()
     try:
-        person = checksession(form["session"])
-        print(person)
-        return render_template("index.html",person=person)
+        person = getnormaluser()
     except Exception:
-        pass
+        return redirect(url_for("login"))
     
-    return redirect(url_for("login"))
+    return render_template("index.html",person=person)
+
+@app.route("/search")
+def search():
+    pass
+
+@app.route("/account")
+def account():
+    pass
+
+@app.route("/editproject",defaults={"project_id":None})
+@app.route("/editproject/<project_id>")
+def editproject(project_id):
+    try:
+        person = getnormaluser()
+    except Exception:
+        return redirect(url_for("login"))
+
+    # They could be starting a new project or editing an existing
+    # one.
+    project = None
+
+    # If it's a new project they need to be an admin
+    if project_id is None and not person["is_admin"]:
+        raise Exception("Admins only")
+
+    if project is None:
+        project = {"id":"","title":"","description":""}
+    else:
+        project = projects.find_one({"project_id":project_id})
+        if not project:
+            raise Exception(f"Project {project_id} not found")
+
+        # To do this they either need to be an admin or they need to own the project
+        if not (person["is_admin"] or project["owner"] == person["_oid"]):
+            raise Exception("You don't have permission to view this project")
+
+
+    return render_template("edit_project.html",project=project, person=person)
+
+
+@app.route("/reports")
+def reports():
+    pass
+
+@app.route("/checkowner", methods = ['POST', 'GET'])
+def checkowner():
+    "Used to check usernames for new projects when they press the check button"
+    # This is for admins only
+    getadminuser()
+
+    form = get_form()
+
+    found_person = people.find_one({"username":form["username"]})
+
+    person_text = f"{found_person['name']} ({form['username']})"
+
+    return person_text
+
+
 
 @app.route("/login")
 def login():
@@ -207,6 +263,21 @@ def generate_id(size):
 
     return code
 
+def getnormaluser():
+    form = get_form()
+    person = checksession(form["session"])
+
+    return person
+
+def getadminuser():
+    form = get_form()
+    person = checksession(form["session"])
+
+    if not person["is_admin"]:
+        raise Exception("Not and admin")
+
+    return person
+
 
 def checksession (sessioncode):
     """
@@ -254,7 +325,7 @@ def connect_to_database(conf):
     )
 
 
-    db = client.webbase_database
+    db = client.pims_database
 
     global people
     people = db.people_collection
@@ -262,6 +333,8 @@ def connect_to_database(conf):
     global ips
     ips = db.ips_collection
 
+    global projects
+    projects = db.projects_collection
 
 # Read the main configuration
 server_conf = get_server_configuration()

@@ -22,17 +22,19 @@
   </head>
   <body>
     <div id="maincontent" class="container">
-      <div class="row">
-        <h2>PIMS Proteomics LIMS System</h2>
+      <div class="row text-center">
+        <h1>PIMS Proteomics LIMS System</h1>
       </div>
       <div class="row">
           <div class="col-md-2">
             <div class="d-grid gap-2">
-              <button class="btn btn-primary">Home</button>
-              <button class="btn btn-primary">Search</button>
-              <button class="btn btn-warning mt-3 adminonly">New Project</button>
-              <button class="btn btn-warning mb-3 adminonly">Reports</button>
-              <button class="btn btn-primary">Account</button>
+              <a href="{{ url_for('index')}}" class="btn btn-primary" role="button">Home</a>
+              <a href="{{ url_for('search')}}" class="btn btn-primary" role="button">Search</a>
+              {% if person['is_admin'] %}
+              <a href="{{ url_for('editproject')}}" class="btn btn-warning mt-3" role="buttoon">New Project</a>
+              <a href="{{ url_for('reports')}}"  class="btn btn-warning mb-3" role="button">Reports</a>
+              {% endif %}
+              <a href="{{ url_for('account')}}"  class="btn btn-primary" role="button">Account</a>
               <button class="btn btn-danger" id="logout">Log Out</button>
             </div>
           </div>
