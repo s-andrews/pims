@@ -11,4 +11,35 @@
 <div class="row">
   <h2>Recent Projects</h2>
 </div>
+
+
+<div class="row">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Title</th>
+        <th scope="col">Date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Open</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if projects %}
+      {% else %}
+      <tr><td colspan=5 class="text-center">No recent projects</td></tr>
+      {% endif %}
+    {% for project in projects %}
+    <tr>
+      <td>{{ project.project_id }}</td>
+      <td>{{ project.title }}</td>
+      <td>{{ project.date_created }}</td>
+      <td>{{ project.status }}</td>
+      <td><a href="/project/{{ project.project_id }}" role="button" class="btn btn-success">Open</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}

@@ -21,7 +21,38 @@ def index():
     except Exception:
         return redirect(url_for("login"))
     
-    return render_template("index.html",person=person)
+    # Get recent projects]
+    recent_projects = []
+    for project in projects.find({"owner":person["_id"]}).sort("date_created",-1).limit(10):
+        recent_projects.append(project)
+
+
+    return render_template("index.html",person=person, projects=recent_projects)
+
+
+@app.route("/project/<project_id>")
+def project(project_id):
+
+    project_id = int(project_id)
+
+    try:
+        person = getnormaluser()
+    except Exception:
+        return redirect(url_for("login"))
+
+    # Get the project
+    project = projects.find_one({"project_id":project_id})
+
+    if not project:
+        raise Exception("No project found")
+    
+    # Check they are allowed to see this
+    if not can_person_see_project(person,project):
+        raise Exception("Not allowed to view this project")
+
+    return render_template("project.html",person=person, project=project)
+
+
 
 @app.route("/search")
 def search():
@@ -47,16 +78,16 @@ def editproject(project_id):
     if project_id is None and not person["is_admin"]:
         raise Exception("Admins only")
 
-    if project is None:
+    if project_id is None:
         project = {"id":"","title":"","description":""}
     else:
-        project = projects.find_one({"project_id":project_id})
+        project = projects.find_one({"project_id":int(project_id)})
         if not project:
             raise Exception(f"Project {project_id} not found")
 
         # To do this they either need to be an admin or they need to own the project
-        if not (person["is_admin"] or project["owner"] == person["_oid"]):
-            raise Exception("You don't have permission to view this project")
+        if not can_person_edit_project(person,project):
+            raise Exception("You don't have permission to edit this project")
 
 
     return render_template("edit_project.html",project=project, person=person)
@@ -68,44 +99,12 @@ def saveproject():
     person = getnormaluser()
     form = get_form()
 
-    # If there isn't a project id then this needs to be an admin doing this
+    # If there isn't a project id then we're making a new project
     if not form["project_id"]:
+        # Only admins can make new projects
         if not person["is_admin"]:
             raise Exception("Only admins can create projects")
-
-    else:
-        # If there is a project id then this person can either be an admin
-         # or they can own the project
-         project = projects.find_one({"project_id":form["project_id"]})
-         if not project:
-             raise Exception(f"Couldn't find project {form['project_id']}")
-         
-         if not(person["is_admin"] or person["_id"] == project["owner_id"]):
-             raise Exception("You don't have permission to change this project")
-
-    if form["project_id"]:
-        project = projects.find({"project_id":int(form["project_id"])})
-
-        # They may want to change the owner
-        if form["owner"]:
-            owner = people.find_one({"username":form["owner"]})["_id"]
-            if project["owner_id"] != owner["_id"]:
-                # update the owner
-                projects.update_one({"_id":project["_id"]},{"$set":{"owner_id":owner["_id"]}})
-
-            # We'll update the title and description
-            projects.update_one({"_id":project["_id"]},{"$set":{"title":form["title"],"description":form["description"]}})
-
-        return str(project["project_id"])
-
-
-
-        # We're editing an existing project
-        pass
-
-    else:
-        # We're making a new project
-
+        
         # We need an owner
         owner = people.find_one({"username":form["owner"]})["_id"]
 
@@ -118,7 +117,7 @@ def saveproject():
         new_project = {
             "owner": owner,
             "title": form["title"],
-            "desciption": form["description"],
+            "description": form["description"],
             "date_created": datetime.datetime.now(tz=datetime.timezone.utc),
             "status": "proposed",
             "samples":[],
@@ -129,9 +128,32 @@ def saveproject():
         }
 
         projects.insert_one(new_project)
-
         return str(project_id)
 
+
+    else:
+
+        # We're editing an existing project
+        project = projects.find_one({"project_id":int(form["project_id"])})
+
+        # Check this person is allowed to do this
+        if not can_person_edit_project(person,project):
+            raise Exception("You can't edit this project")
+
+        # They may want to change the owner
+        if form["owner"]:
+            if not (person["is_admin"]):
+                raise Exception("Only admins can change owners")
+            
+            owner = people.find_one({"username":form["owner"]})["_id"]
+            if project["owner_id"] != owner["_id"]:
+                # update the owner
+                projects.update_one({"_id":project["_id"]},{"$set":{"owner_id":owner["_id"]}})
+
+        # We'll update the title and description
+        projects.update_one({"_id":project["_id"]},{"$set":{"title":form["title"],"description":form["description"]}})
+
+        return str(project["project_id"])
 
 
 @app.route("/reports")
@@ -350,6 +372,26 @@ def getadminuser():
         raise Exception("Not and admin")
 
     return person
+
+def can_person_see_project(person,project):
+    if person["is_admin"]:
+        return True
+    
+    if person["_id"] == project["owner"]:
+        return True
+    
+    # We'll do some checking for sharing eventually.
+
+    return False
+
+def can_person_edit_project(person,project):
+    if person["is_admin"]:
+        return True
+    
+    if person["_id"] == project["owner"]:
+        return True
+    
+    return False
 
 
 def checksession (sessioncode):

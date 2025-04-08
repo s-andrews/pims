@@ -22,9 +22,12 @@ function saveproject() {
         project_owner = $("#checkedname").data("username")
     }
     else {
-        $("#errormessage").text("You need to set the project owner")
-        $("#editprojecterror").modal("show")
-        return
+        // This is an error if this is a new project
+        if (!project_id) {
+            $("#errormessage").text("You need to set the project owner")
+            $("#editprojecterror").modal("show")
+            return
+        }
     }
 
     let project_title = $("#project_title").val()
@@ -49,7 +52,7 @@ function saveproject() {
     $("#saveproject").prop("disabled",true)
     $.ajax(
         {
-            url: "saveproject",
+            url: "/saveproject",
             method: "POST",
             data: {
                 project_id: project_id,
