@@ -9,6 +9,7 @@ from pathlib import Path
 import json
 import ldap
 import time
+import datetime
 
 app = Flask(__name__)
 
@@ -59,6 +60,62 @@ def editproject(project_id):
 
 
     return render_template("edit_project.html",project=project, person=person)
+
+@app.route("/saveproject", methods = ['POST', 'GET'])
+def saveproject():
+    "Create a new project or update an existing one"
+
+    person = getnormaluser()
+    form = get_form()
+
+    # If there isn't a project id then this needs to be an admin doing this
+    if not form["project_id"]:
+        if not person["is_admin"]:
+            raise Exception("Only admins can create projects")
+
+    else:
+        # If there is a project id then this person can either be an admin
+         # or they can own the project
+         project = projects.find_one({"project_id":form["project_id"]})
+         if not project:
+             raise Exception(f"Couldn't find project {form['project_id']}")
+         
+         if not(person["is_admin"] or person["_id"] == project["owner_id"]):
+             raise Exception("You don't have permission to change this project")
+
+    if form["project_id"]:
+        # We're editing an existing project
+        pass
+
+    else:
+        # We're making a new project
+
+        # We need an owner
+        owner = people.find_one({"username":form["owner"]})["_id"]
+
+        # We need to find the next available project_id
+        project_id = 1
+
+        for last_project in projects.find().sort({"project_id":-1}).limit(1):
+            project_id = last_project["project_id"] + 1
+
+        new_project = {
+            "owner": owner,
+            "title": form["title"],
+            "desciption": form["description"],
+            "date_created": datetime.datetime.now(tz=datetime.timezone.utc),
+            "status": "proposed",
+            "samples":[],
+            "tags":[],
+            "project_id": project_id,
+            "share_codes": [],
+            "shared_with": []
+        }
+
+        projects.insert_one(new_project)
+
+    return project_id
+
 
 
 @app.route("/reports")

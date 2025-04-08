@@ -37,8 +37,27 @@
 </div>
 
 <div class="row mt-5">
-    <button type="button" class="btn btn-primary">Save Project</button>
+    <button id="saveproject" type="button" class="btn btn-primary">Save Project</button>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="editprojecterror" tabindex="-1" role="dialog" aria-labelledby="errorTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorTitle">Error</h5>
+      </div>
+      <div class="modal-body" id="errormessage">
+        Something went wrong
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 {% endblock %}
