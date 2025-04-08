@@ -84,6 +84,22 @@ def saveproject():
              raise Exception("You don't have permission to change this project")
 
     if form["project_id"]:
+        project = projects.find({"project_id":int(form["project_id"])})
+
+        # They may want to change the owner
+        if form["owner"]:
+            owner = people.find_one({"username":form["owner"]})["_id"]
+            if project["owner_id"] != owner["_id"]:
+                # update the owner
+                projects.update_one({"_id":project["_id"]},{"$set":{"owner_id":owner["_id"]}})
+
+            # We'll update the title and description
+            projects.update_one({"_id":project["_id"]},{"$set":{"title":form["title"],"description":form["description"]}})
+
+        return str(project["project_id"])
+
+
+
         # We're editing an existing project
         pass
 
@@ -114,7 +130,7 @@ def saveproject():
 
         projects.insert_one(new_project)
 
-    return project_id
+        return str(project_id)
 
 
 

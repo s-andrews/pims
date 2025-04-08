@@ -58,7 +58,7 @@ function saveproject() {
                 description: project_description
             },
             success: function(project_id) {
-                window.location.href("/project/"+project_id)
+                window.location.href = "/project/"+project_id
             },
             error: function(message) {
                 $("#errormessage").text("Failed to save project")
