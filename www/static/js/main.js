@@ -1,6 +1,4 @@
 $( document ).ready(function() {
-    show_login()
-
     // Action when they log in
     $("#login").click(process_login)
     $("#password").keypress(function(e){
@@ -9,75 +7,15 @@ $( document ).ready(function() {
         }
     });
 
-    // Pressme button
-    $("#pressme").click(button_pressed)
 
     // Action when they log out
     $("#logout").click(logout)
 
 })
 
-
-function button_pressed() {
-    $.ajax(
-        {
-            url: "get_user_data",
-            method: "POST",
-            success: function(user_data) {
-                write_user_data(user_data)
-            },
-            error: function(message) {
-                alert("Failed to get user data")
-            }
-        }
-    )
-}
-
-function write_user_data(user_data) {
-    $("#user_details_name").html(user_data["name"])
-    $("#user_details_username").html(user_data["username"])
-    $("#user_details_email").html(user_data["email"])
-
-}
-
-function show_login() {
-
-    // Check to see if there's a valid session ID we can use
-
-    let session = Cookies.get("pims_session_id")
-    if (session) {
-        // Validate the ID
-        $.ajax(
-            {
-                url: "validate_session",
-                method: "POST",
-                success: function(usersname) {
-                    $("#logindiv").modal("hide")
-
-                    $("#maincontent").show()
-
-                    $("#loginname").text(usersname)
-
-                },
-                error: function(message) {
-                    console.log("Existing session didn't validate")
-                    Cookies.remove("pims_session_id")
-                    $("#logindiv").modal("show")
-                    show_login()
-                }
-            }
-        )
-    }
-    else {
-        $("#logindiv").modal("show")
-    }
-}
-
 function logout() {
     Cookies.remove("pims_session_id")
-    $("#maincontent").hide()
-
-    $("#logindiv").modal("show")
+    location.reload()
 }
 
 
@@ -99,20 +37,14 @@ function process_login() {
 
     $.ajax(
         {
-            url: "login",
+            url: "processlogin",
             method: "POST",
             data: {
                 username: username,
                 password: password
             },
             success: function(session_string) {
-                $("#loginerror").hide()
-
-                $("#login").text("Log In")
-                $("#login").prop("disabled",false)
-                $("#username").prop("disabled",false)
-                $("#password").prop("disabled",false)
-                show_login()
+                window.location.href = "/"
             },
             error: function(message) {
                 $("#login").prop("disabled",false)

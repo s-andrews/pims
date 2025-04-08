@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, url_for, redirect
 import random
 from urllib.parse import quote_plus
 from pymongo import MongoClient
@@ -15,9 +15,21 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    form = get_form()
+    try:
+        person = checksession(form["session"])
+        print(person)
+        return render_template("index.html",person=person)
+    except Exception:
+        pass
+    
+    return redirect(url_for("login"))
 
-@app.route("/login", methods = ['POST', 'GET'])
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/processlogin", methods = ['POST', 'GET'])
 def process_login():
     """
     Validates an username / password combination and generates

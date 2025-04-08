@@ -21,31 +21,23 @@
     <title>{% block title %}PIMS Proteomics LIMS{% endblock %}</title>
   </head>
   <body>
-    <div id="maincontent" class="container">
-      <div class="row">
-        <h2>PIMS Proteomics LIMS System</h2>
+    <!-- Login -->
+    <div id="logindiv" class="modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Log In</h2>
+            <img class="float-end" src="{{ url_for('static', filename='images/bioinformatics_logo.svg') }}" width="100px">
+          </div>
+          <div class="modal-body">
+              <label for="username">Username</label>
+              <input class="form-control" type="text" id="username">
+              <label for="Password">Password</label>
+              <input class="form-control" type="password" id="password">
+              <button id="login" type="button" class="form-control btn btn-primary mt-2">Log In</button>
+          </div>
+        </div>
       </div>
-      <div class="row">
-          <div class="col-md-2">
-            <div class="d-grid gap-2">
-              <button class="btn btn-primary">Home</button>
-              <button class="btn btn-primary">Search</button>
-              <button class="btn btn-warning mt-3 adminonly">New Project</button>
-              <button class="btn btn-warning mb-3 adminonly">Reports</button>
-              <button class="btn btn-primary">Account</button>
-              <button class="btn btn-danger" id="logout">Log Out</button>
-            </div>
-          </div>
-          <div class="col-md-10">
-            {% block content %}{% endblock %}
-          </div>
-        </div>
-        <div id="footer" class="row">
-          <div class="col-md-12">
-            PIMS Proteomics LIMS - Please report any problems to our <a href="https://github.com/s-andrews/pims/issues">bug database</a>
-          </div>
-        </div>
-      
     </div>
 
     <!-- Bootstrap JS -->
@@ -60,6 +52,11 @@
 
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $("#logindiv").modal("show")
+        });
+    </script>
     {% block js %}{% endblock %}
   </body>
 </html>
