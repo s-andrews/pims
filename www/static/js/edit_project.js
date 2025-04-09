@@ -23,7 +23,7 @@ function add_tag() {
 
 
     // Add the tag
-    $("#added_tags").append(`<button type="button" class="btn btn-sm btn-secondary">${tag_name}<span class="tagclose"> &times;</span></button>\n`)
+    $("#added_tags").append(`<button type="button" class="btn btn-sm btn-secondary tag_value">${tag_name}<span class="tagclose"> &times;</span></button>\n`)
 
     
 }
@@ -71,6 +71,12 @@ function saveproject() {
         return
     }
 
+    // Do we have any tags?
+    let tag_list = []
+    $(".tag_value").each(function(){
+        tag_list.push($(this).text().slice(0,-2))
+    })
+
     // We can go ahead and edit the project.
     $("#saveproject").prop("disabled",true)
     $.ajax(
@@ -81,7 +87,8 @@ function saveproject() {
                 project_id: project_id,
                 owner: project_owner,
                 title: project_title,
-                description: project_description
+                description: project_description,
+                tags: tag_list
             },
             success: function(project_id) {
                 window.location.href = "/project/"+project_id
