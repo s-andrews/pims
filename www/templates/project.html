@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="row">
+    <h2 class="text-center">{{ project.title}} (Project {{project.project_id}})</h2>
+</div>
+
+<div class="row">
+    <p class="text-center">
+        <span class="status {{ project.status }}">{{ project.status }}</span> | {{ project.owner }} |  <button type="button" class="btn btn-sm btn-primary">Share</button> |  <button type="button" class="btn btn-sm btn-warning">Budget</button> | <a role="button" type="button" class="btn btn-sm btn-warning" href="/editproject/{{project.project_id}}">Edit</a>
+    </p>
+</div>
+
+<div class="row">
+    <p>{{ project.description }}</p>
+</div>
+
+<div class="row">
+    <h3 class="text-center">Samples</h3>
+</div>
+
+<div class="row">
+    <h3 class="text-center">Timeline</h3>
+</div>
+
+
 
 {% endblock %}

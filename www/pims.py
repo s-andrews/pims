@@ -45,10 +45,14 @@ def project(project_id):
 
     if not project:
         raise Exception("No project found")
-    
+        
     # Check they are allowed to see this
     if not can_person_see_project(person,project):
         raise Exception("Not allowed to view this project")
+
+    # We want to swap the owner on the project for the owner name
+    owner = people.find_one({"_id": project["owner"]})
+    project["owner"] = owner["name"]
 
     return render_template("project.html",person=person, project=project)
 
@@ -146,7 +150,7 @@ def saveproject():
                 raise Exception("Only admins can change owners")
             
             owner = people.find_one({"username":form["owner"]})["_id"]
-            if project["owner_id"] != owner["_id"]:
+            if project["owner"] != owner["_id"]:
                 # update the owner
                 projects.update_one({"_id":project["_id"]},{"$set":{"owner_id":owner["_id"]}})
 

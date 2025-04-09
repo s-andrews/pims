@@ -1,6 +1,3 @@
-#maincontent {
-}
-
 #footer {
     color: black;
     background-color: lightgray;
@@ -20,3 +17,9 @@ h2 {
     padding-top: 1em;
 }
 
+.proposed {
+    background-color: gray;
+    color: white;
+    padding: 0.3em;
+    border-radius: 5%;
+}
