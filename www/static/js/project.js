@@ -2,8 +2,44 @@ $( document ).ready(function() {
 
     $("#add_sample").click(show_new_sample)
     $("#save_sample").click(save_sample)
+    $(".deletesample").click(delete_sample)
 
 })
+
+
+function delete_sample() {
+    //  We need to get the project id and sample id from 
+    // the start of the table row in which the delete 
+    // button was found.
+
+    let ids = $(this).parent().parent().find("td").first().text()
+    let project_sample = ids.split("-")
+
+    $(this).prop("disabled",true)
+
+    let row_to_delete = $(this).parent().parent()
+    $.ajax(
+        {
+            url: "/deletesample",
+            method: "POST",
+            data: {
+                project_id: project_sample[0],
+                sample_id: project_sample[1]
+            },
+            success: function() {
+                row_to_delete.remove()
+            },
+            error: function(message) {
+                $(this).prop("disabled",false)
+                console.log("Failed to delete sample")
+                return        
+            }
+        }
+    )
+
+
+
+}
 
 
 function save_sample() {

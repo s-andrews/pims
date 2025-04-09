@@ -13,7 +13,6 @@ import datetime
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def index():
     try:
@@ -164,6 +163,29 @@ def saveproject():
             }})
 
         return str(project["project_id"])
+
+
+@app.route("/deletesample", methods = ['POST', 'GET'])
+def deletesample():
+    "Deletes a sample"
+
+    person = getnormaluser()
+    form = get_form()
+
+    # There should always be a project id and a sample id
+    project_id = int(form["project_id"])
+    sample_id = int(form["sample_id"])
+
+    project = projects.find_one({"project_id":project_id})
+
+    # Check that this person can edit this project
+    if not can_person_edit_project(person,project):
+        raise Exception("Not allowed to edit this project")
+    
+    projects.update_one({"project_id":project_id},{"$pull" : {"samples" :{"sample_id":sample_id}}})
+
+    return("OK")
+
 
 
 @app.route("/savesample", methods = ['POST', 'GET'])
