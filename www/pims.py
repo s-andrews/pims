@@ -226,7 +226,24 @@ def savesample():
             sample["tags"][tag] = form["tags"][i]
 
         projects.update_one({"project_id":project_id},{"$push":{"samples":sample}})
-        return str(sample_id)
+        return "OK"
+    
+    else:
+        sample_id = int(form["sample_id"])
+
+        sample = {
+            "samples.$.name": form["name"],
+            "samples.$.state": form["state"],
+            "samples.$.organism": form["organism"],
+            "samples.$.status": "Not received",
+            "samples.$.tags" : {}
+        }
+
+        for i,tag in enumerate(project["tags"]):
+            sample["samples.$.tags"][tag] = form["tags"][i]
+
+        projects.update_one({"project_id":project_id, "samples.sample_id":sample_id},{"$set": sample})
+        return "OK"
 
 
 
