@@ -166,6 +166,46 @@ def saveproject():
         return str(project["project_id"])
 
 
+@app.route("/savesample", methods = ['POST', 'GET'])
+def savesample():
+    "Create a new sample or update an existing one"
+
+    person = getnormaluser()
+    form = get_form()
+
+    # There should always be a project id
+    project_id = int(form["project_id"])
+
+    project = projects.find_one({"project_id":project_id})
+
+    # Check that this is OK
+    if not can_person_edit_project(person,project):
+        raise Exception("Not allowed to edit this project")
+
+    # If there isn't a sample id then we're making a new sample
+    if not form["sample_id"]:
+
+        # We need to find the next available sample id
+        sample_id = 0
+        for sample in project["samples"]:
+            if sample["sample_id"]>=sample_id:
+                sample_id = sample["sample_id"] + 1
+
+        sample = {
+            "sample_id": sample_id,
+            "name": form["name"],
+            "state": form["state"],
+            "organism": form["organism"]
+        }
+        
+        for i,tag in enumerate(project["tags"]):
+            sample[tag] = form["tags"][i]
+
+        projects.update_one({"project_id":project_id},{"$push":{"samples":sample}})
+        return str(sample_id)
+
+
+
 @app.route("/reports")
 def reports():
     pass
