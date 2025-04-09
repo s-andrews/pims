@@ -35,21 +35,21 @@
             </tr>
         </thead>
         <tbody>
-            {% if samples %}
+            {% if project.samples %}
             {% else %}
             <tr>
                 <td colspan={{ project.tags|length +7 }} class="text-center">No samples</td>
             </tr>
             {% endif %}
-            {% for sample in samples %}
+            {% for sample in project.samples %}
             <tr>
                 <td>{{ project.project_id }}-{{sample.sample_id}}</td>
                 <td>{{ sample.name }}</td>
-                <td>{{ sample.tags.state }}</td>
+                <td>{{ sample.state }}</td>
                 <td>{{ sample.organism }}</td>
                 {% for tag in project.tags %}
-                <td>{{ sample.tags['tag'] }}</th>
-                    {% endfor %}
+                <td>{{ sample.tags[tag] }}</th>
+                {% endfor %}
                 <td>{{ sample.status }}</td>
                 <td><button class="btn btn-sm deletesample btn-danger">Delete</button></td>
                 <td><button class="btn btn-sm editsample btn-success">Edit</button></td>
