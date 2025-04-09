@@ -125,7 +125,7 @@ def saveproject():
             "date_created": datetime.datetime.now(tz=datetime.timezone.utc),
             "status": "proposed",
             "samples":[],
-            "tags":[],
+            "tags":form["tags"],
             "project_id": project_id,
             "share_codes": [],
             "shared_with": []
@@ -155,7 +155,13 @@ def saveproject():
                 projects.update_one({"_id":project["_id"]},{"$set":{"owner_id":owner["_id"]}})
 
         # We'll update the title and description
-        projects.update_one({"_id":project["_id"]},{"$set":{"title":form["title"],"description":form["description"]}})
+        projects.update_one(
+            {"_id":project["_id"]},
+            {"$set":{
+                "title":form["title"],
+                "description":form["description"],
+                "tags": form["tags"]
+            }})
 
         return str(project["project_id"])
 
@@ -334,15 +340,25 @@ def get_form():
         session = request.cookies["pims_session_id"]
 
     if request.method == "GET":
-        form = request.args.to_dict(flat=True)
+        form = args_to_dict(request.args)
         form["session"] = session
         return form
 
     elif request.method == "POST":
-        form = request.form.to_dict(flat=True)
+        form = args_to_dict(request.form)
         form["session"] = session
         return form
 
+def args_to_dict(args):
+    form = {}
+
+    for key in args.keys():
+        if key.endswith("[]"):
+            form[key[:-2]] = args.getlist(key)
+        else:
+            form[key] = args.get(key)
+
+    return form
 
 def generate_id(size):
     """

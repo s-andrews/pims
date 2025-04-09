@@ -46,6 +46,9 @@
     </div>
     <div class="col-md-9">
         <div class="mt-4" id="added_tags">
+            {% for tag in project.tags %}
+                <button type="button" class="btn btn-sm btn-secondary tag_value">{{ tag }}<span class="tagclose"> &times;</span></button>
+            {% endfor %}
         </div>
     </div>
 </div>

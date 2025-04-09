@@ -20,10 +20,24 @@ function add_tag() {
     }
 
     // Check for uniqueness
+    let found_tag = false
+    $(".tag_value").each(function(){
+        if (tag_name == $(this).text().slice(0,-2)) {
+            found_tag = true
+        }
+    })
+
+    if (found_tag) {
+        return
+    }
+
 
 
     // Add the tag
     $("#added_tags").append(`<button type="button" class="btn btn-sm btn-secondary tag_value">${tag_name}<span class="tagclose"> &times;</span></button>\n`)
+    
+    $(".tagclose").off("click")
+    $(".tagclose").click(remove_tag);
 
     
 }
