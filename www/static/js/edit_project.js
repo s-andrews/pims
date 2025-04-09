@@ -2,8 +2,31 @@ $( document ).ready(function() {
 
     $("#checkowner").click(checkowner);
     $("#saveproject").click(saveproject);
+    $("#addtag").click(add_tag);
+    $(".tagclose").click(remove_tag);
 
 })
+
+
+function remove_tag() {
+    $(this).parent().remove()
+}
+
+function add_tag() {
+    let tag_name = $("#new_tag").val()
+
+    if (!tag_name) {
+        return
+    }
+
+    // Check for uniqueness
+
+
+    // Add the tag
+    $("#added_tags").append(`<button type="button" class="btn btn-sm btn-secondary">${tag_name}<span class="tagclose"> &times;</span></button>\n`)
+
+    
+}
 
 function saveproject() {
     // Check we've got enough information to save the project
