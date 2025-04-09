@@ -5,6 +5,10 @@
     margin-top: 2em;
 }
 
+pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+}
 
 @keyframes blinker {
     50% {
